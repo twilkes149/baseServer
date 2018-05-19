@@ -9,6 +9,8 @@
   "author": "Tucker Wilkes",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.3"
+    "dotenv-safe": "^5.0.1",
+    "express": "^4.16.3",
+    "promise-mysql": "^3.2.1"
   }
 }
