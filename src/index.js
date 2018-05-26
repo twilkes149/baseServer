@@ -25,6 +25,6 @@ server.use((req, res, next) => {
   res.status(404).send({message: 'does not exist'});
 });
 
-server.listen(process.env.PORT, () => {
-  console.log("Listening on port: ", process.env.PORT);
+server.listen(process.env.SERVER_PORT, () => {
+  console.log("Listening on port: ", process.env.SERVER_PORT);
 });
