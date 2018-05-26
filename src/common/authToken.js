@@ -10,6 +10,13 @@ function generateToken() {
   });
 }
 
+async function saveToken(username, token, conn) {
+  let query = `INSERT INTO authkey (value, username, timestamp) VALUES ("${username}", "${token}", NOW())`;
+
+  await conn.query(query);  
+}
+
 module.exports = {
   generateToken,
+  saveToken,
 }

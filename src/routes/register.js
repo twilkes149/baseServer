@@ -12,6 +12,7 @@ var jwt = require('../common/authToken');
 */
 
 router.post('/register', async (req, res, next) => {
+  console.log("register");
   let conn = res.locals.conn;
 
   //retrieve info
@@ -40,11 +41,14 @@ router.post('/register', async (req, res, next) => {
   password = await Password.hash(password);//hash the password
   try {
     let query = `INSERT INTO users (username, password, firstname, lastname, email) VALUES ("${username}", "${password}", "${firstname}", "${lastname}", "${email}")`;
-    await conn.query(query);    
-    res.status(200).send({success: true, message: 'Successfuly registered', token: jwt.generateToken()});//generate auth token and return to client
+    await conn.query(query);
+    
+    let token = jwt.generateToken();
+    res.status(200).send({success: true, message: 'Successfuly registered', token: token});//generate auth token and return to client
   }
   catch (error) {
     error.status = 500;
+    error.body = {success: false, message: "SQL error"};
     return next(error);
   }
 });
