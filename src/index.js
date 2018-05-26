@@ -4,25 +4,29 @@ require('dotenv-safe').config();//load environment variables
 var loginRoute = require('./routes/login');
 var registerRoute = require('./routes/register');
 var authenticate = require('./middleware/authenticate');
-var dbConnection = require('./middleware/createDBConnection');
+var dbConnection = require('./middleware/database');
 
 var server = express();
 
 server.use(express.json());//parse json bodies
-server.use(dbConnection);
+server.use(dbConnection.routeConnection);
 server.post('/login', loginRoute);
 server.post('/register', registerRoute);
 
 server.use(authenticate);//authenticate client for any other route
 
 //handle errors
-server.use((error, req, res, next) => {
-  next();
+server.use((error, req, res, next) => {  
+  if (error.status && error.body)
+    res.status(error.status).send(error.body);
+  else {
+    res.status(500).send({success: false, message: 'Internal server error'});
+  }
 });
 
 //handle invalid paths
 server.use((req, res, next) => {
-  res.status(404).send({message: 'does not exist'});
+  res.status(404).send({success: false, message: 'path does not exist'});
 });
 
 server.listen(process.env.SERVER_PORT, () => {
