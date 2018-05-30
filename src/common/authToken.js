@@ -16,6 +16,10 @@ async function saveToken(username, token, conn) {
   await conn.query(query);  
 }
 
+async function updateToken(username, token, conn) {
+  let query = ``;
+}
+
 module.exports = {
   generateToken,
   saveToken,
