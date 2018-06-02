@@ -72,7 +72,7 @@ async function sendEmail(email, username, conn) {
       '<p>&nbsp;</p>' +
       '<p style="text-align: center;">You recently registered an email account with our app.&nbsp;</p>' +
       `<p style="text-align: center;">Please take a moment to confirm your email by clicking <a href='${process.env.SERVER_HOST}confirmEmail?token=${token}'>here</a> </p>` +
-      `<p style="text-align: center;">or by copy and pasting this link into your browser http://${process.env.SERVER_HOST}confirmEmail?token=${token}</p>`+ 
+      `<p style="text-align: center;">or by copy and pasting this link into your browser <br /> http://${process.env.SERVER_HOST}confirmEmail?token=${token}</p>`+ 
       '<p style="text-align: center;">&nbsp;</p>' +
       '<p style="text-align: center;">If you feel you are receiving this email by mistake, please ignore it.',
   };

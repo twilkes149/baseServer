@@ -6,8 +6,7 @@ router.get('/confirmEmail', async (req, res, next) => {
   console.log('confirmEmail');
 
   let conn = res.locals.conn;
-  let token = req.query.token;//grab the token from the get request
-  console.log("token: ", token);
+  let token = req.query.token;//grab the token from the get request  
 
   try {
     let payload = jwt.verifyToken(token);
@@ -32,7 +31,11 @@ router.get('/confirmEmail', async (req, res, next) => {
     query = `DELETE from confirmtoken WHERE value = "${token}"`;
     await conn.query(query);
 
-    res.status(200).send({success: true, message: 'Email confirmed'});
+    res.status(200).send("<html><head><title>Email Confirmed</title></head><body><h1 style='text-align: center;'>&nbsp;</h1>" +
+      "<h1 style='text-align: center;'>Thank you!</h1>" +
+      "<p style='text-align: center;'>Your email has been confirmed.</p>" +
+      "<hr />" +
+      "<p style='text-align: center;''>&nbsp;</p></body></html>");
 
   }
   catch (error) {//token is invalid
