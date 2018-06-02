@@ -11,7 +11,7 @@ router.post('/forgotPassword', async (req, res, next) => {
     to: 'twilkes149@gmail.com',
     from: 'twilkes149@gmail.com',
     subject: 'Reset Password',
-    text: 'Hey',
+    text: 'Email confirmation',
     html: '<p><img style="display: block; margin-left: auto; margin-right: auto;" src="http://remoteidea.com/images/IdeaTek_logo_hor_4c.png" width="621" height="207" /></p>' +
       '<p>&nbsp;</p>' +
       '<p style="text-align: center;">You recently registered an email account with our app.&nbsp;</p>' +

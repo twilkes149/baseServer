@@ -3,6 +3,7 @@ require('dotenv-safe').config();//load environment variables
 
 var loginRoute = require('./routes/login');
 var registerRoute = require('./routes/register');
+var confirmEmailRoute = require('./routes/confirmEmail');
 var forgotPasswordRoute = require('./routes/forgotPassword');
 
 var authenticate = require('./middleware/authenticate');
@@ -14,6 +15,7 @@ server.use(express.json());//parse json bodies
 server.use(dbConnection.routeConnection);
 server.post('/login', loginRoute);
 server.post('/register', registerRoute);
+server.get('/confirmEmail', confirmEmailRoute);
 server.post('/forgotPassword', forgotPasswordRoute);
 
 server.use(authenticate);//authenticate client for any other route
