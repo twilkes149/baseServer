@@ -47,6 +47,7 @@ async function sendEmail(email, token) {
   mailSender.setApiKey(process.env.MAIL_TOKEN);
 
   email = email.replace(/^'|'$/g, ''); 
+  token = token.replace(/^'|'$/g, ''); 
   const msg = {
     to: email,
     from: process.env.MAIL_FROM_ADDRESS.replace(/^'|'$/g, ''),
