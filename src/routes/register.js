@@ -3,7 +3,7 @@ var router = express.Router();
 var Database = require('../middleware/database');
 var Password = require('../common/password');
 var jwt = require('../common/authToken');
-
+var mailSender = require('@sendgrid/mail');
 /*
 * Response codes:
 * 400 - client didn't supply all fields
@@ -44,6 +44,7 @@ router.post('/register', async (req, res, next) => {
     await conn.query(query);
     
     let token = jwt.generateToken();
+    await sendEmail(email, username, conn);//send confirmation email
     res.status(200).send({success: true, message: 'Successfuly registered', token: token});//generate auth token and return to client
   }
   catch (error) {
@@ -52,5 +53,31 @@ router.post('/register', async (req, res, next) => {
     return next(error);
   }
 });
+
+
+async function sendEmail(email, username, conn) {
+
+  let token = jwt.generateConfirmEmailToken();//generate random token
+  let query = `INSERT INTO confirmtoken (value, username) VALUES ("${token}", "${username}")`;//insert token into db
+  await conn.query(query);
+
+  email = email.replace(/^'|'$/g, '');  
+  //send email to client
+  let msg = {
+    to: `${email}`,
+    from: process.env.MAIL_FROM_ADDRESS.replace(/^'|'$/g, ''),
+    subject: 'Email confirmation',
+    text: `Please take a moment to confirm your email by copy and pasting this link into your browser http://${process.env.SERVER_HOST}confirmEmail?token=${token}`,
+    html: `<p><img style="display: block; margin-left: auto; margin-right: auto;" src="${process.env.MAIL_LOGO_SOURCE}" width="621" height="207" /></p>` +
+      '<p>&nbsp;</p>' +
+      '<p style="text-align: center;">You recently registered an email account with our app.&nbsp;</p>' +
+      `<p style="text-align: center;">Please take a moment to confirm your email by clicking <a href='${process.env.SERVER_HOST}confirmEmail?token=${token}'>here</a> </p>` +
+      `<p style="text-align: center;">or by copy and pasting this link into your browser <br /> http://${process.env.SERVER_HOST}confirmEmail?token=${token}</p>`+ 
+      '<p style="text-align: center;">&nbsp;</p>' +
+      '<p style="text-align: center;">If you feel you are receiving this email by mistake, please ignore it.',
+  };
+  mailSender.setApiKey(process.env.MAIL_TOKEN);
+  mailSender.send(msg);
+}
 
 module.exports = router;
