@@ -23,6 +23,8 @@ DB_HOST = 'localhost'
 DB_DATABASE = 'databaseName'
 
 TOKEN_SECRET = 'mysecret'
+MAIL_TOKEN = 'send grid mail token'
+MAIL_FROM_ADDRESS = 'no-reply@your-domain.com' 
 ```
 # Tables
 ## Users
@@ -37,6 +39,11 @@ Fields:
 ## Confirm Token
 - value (used to verify if user is the same one that we sent an email to)
 - username
+
+## Forgot password
+- value (used to verify user, sent in an email)
+- email
+- created at (used to verify that token has been recently created)
 
 # Notes
 ## Config file
