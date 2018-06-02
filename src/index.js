@@ -5,6 +5,7 @@ var loginRoute = require('./routes/login');
 var registerRoute = require('./routes/register');
 var confirmEmailRoute = require('./routes/confirmEmail');
 var forgotPasswordRoute = require('./routes/forgotPassword');
+var resetPasswordRoute = require('./routes/resetPassword');
 
 var authenticate = require('./middleware/authenticate');
 var dbConnection = require('./middleware/database');
@@ -17,6 +18,7 @@ server.post('/login', loginRoute);
 server.post('/register', registerRoute);
 server.get('/confirmEmail', confirmEmailRoute);
 server.post('/forgotPassword', forgotPasswordRoute);
+server.post('/resetPassword', resetPasswordRoute);
 
 server.use(authenticate);//authenticate client for any other route
 

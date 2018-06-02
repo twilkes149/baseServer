@@ -1,48 +1,63 @@
 const express = require('express');
 var router = express.Router();
 var mailSender = require('@sendgrid/mail');
+var Database = require('../middleware/database');
 
 router.post('/forgotPassword', async (req, res, next) => {
   console.log("forgotPassword");
 
-  mailSender.setApiKey(process.env.MAIL_TOKEN);
+  let conn = res.locals.conn;
+  let email = (req.body.email) ? Database.sanitize(req.body.email, conn) : null;
 
-  const msg = {
-    to: 'twilkes149@gmail.com',
-    from: 'twilkes149@gmail.com',
-    subject: 'Reset Password',
-    text: 'Email confirmation',
-    html: '<p><img style="display: block; margin-left: auto; margin-right: auto;" src="http://remoteidea.com/images/IdeaTek_logo_hor_4c.png" width="621" height="207" /></p>' +
-      '<p>&nbsp;</p>' +
-      '<p style="text-align: center;">You recently registered an email account with our app.&nbsp;</p>' +
-      `<p style="text-align: center;">Please take a moment to confirm your email by clicking here</p>` +
-      '<p style="text-align: center;">&nbsp;</p>' +
-      '<p style="text-align: center;">If you feel you are receiving this email by mistake, please ignore it or contact Ideatek at&nbsp;</p>' +
-      '<p style="text-align: center;">620-543-5555 or send us an email:</p>' +
-      '<p style="text-align: center;"><a href="mailto:help@ideatek.com">help@ideatek.com</a></p>' +
-      '<p style="text-align: center;">&nbsp;</p>' +
-      '<table style="height: 96px; width: 327px; background-color: #d9dadb; margin-left: auto; margin-right: auto;">' +
-      '<tbody>' +
-      '<tr>' +
-      '<td style="width: 319px; text-align: center;">' +
-      '<p><img src="http://remoteidea.com/images/IdeaTek_logo_hor_4c.png" width="387" height="129" /></p>' +
-      '<p>&nbsp;</p>' +
-      '<p><a href="tel:8554332835">855-IDEATEK</a></p>' +
-      '<p><a href="mailto:ideatek@ideatek.com">ideatek@ideatek.com</a></p>' +
-      '<p>111 Old Mill Lane&nbsp;<br />Buhler, KS 67522</p>' +
-      '</td>' +
-      '</tr>' +
-      '</tbody>' +
-      '</table>' +
-      '<p style="text-align: center;">&nbsp;</p>' +
-      '<p style="text-align: center;">&nbsp;</p>' +
-      '<p style="text-align: center;">&nbsp;</p>' +
-      '<p style="text-align: center;"><strong>&nbsp;</strong></p>',
-  };
-  mailSender.send(msg);
-  res.status(200).send({success: true, message: "Sent email"});
+  //check if user supplied fields
+  if (!email) {
+    let error = new Error("Not all fields were supplied");
+    error.status = 400;
+    error.body = {success: false, message: "Not all required fields were supplied"};
+    return next(error);
+  }
+
+  let token = Database.sanitize(generateToken(6), conn);//generate token and sanitize, so it's the same format as every thing else
+
+  try {
+    //save the username and token for future reference
+    let query = `INSERT INTO forgotpassword (value, email, createdat) VALUES ("${token}", "${email}", NOW())`;
+    await conn.query(query);
+    sendEmail(email, token);//send client their email
+    res.status(200).send({success: true, message: 'Email successfuly sent'});
+  }
+  catch (error) {//handle sql errors    
+    error = new Error("SQL error");
+    error.status = 500;
+    error.body = {success: false, message: 'Internal server error'};
+    return next(error);
+  }
 });
 
-module.exports = router;
+function generateToken(length) {
+  let letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+  let token = '';
+  for (let i = 0; i < length; i++) {
+    token += letters[Math.floor(Math.random() * letters.length)];//get a random element of letters
+  }
+  return token;
+}
 
-//'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'
+async function sendEmail(email, token) {
+  mailSender.setApiKey(process.env.MAIL_TOKEN);
+
+  email = email.replace(/^'|'$/g, ''); 
+  const msg = {
+    to: email,
+    from: process.env.MAIL_FROM_ADDRESS.replace(/^'|'$/g, ''),
+    subject: 'Reset Password',
+    text: `You recently request to reset your password through our app. Please do so, by entering this code into the app and following the onscreen instructions: ${token}`,
+    html: '<p style="text-align: center;">You recently Requested to reset your password through our app.&nbsp;</p>' +
+      `<p style="text-align: center;">Please copy and paste this token into the appropiate field in the app, and then following the on screen instructions</p>` +
+      `<p style="text-align: center;">${token}</p>` +
+      '<p style="text-align: center;">If you feel you are receiving this email by mistake, please ignore it.&nbsp;</p>',
+  };
+  mailSender.send(msg);
+}
+
+module.exports = router;

@@ -67,7 +67,7 @@ async function sendEmail(email, username, conn) {
     to: `${email}`,
     from: process.env.MAIL_FROM_ADDRESS.replace(/^'|'$/g, ''),
     subject: 'Email confirmation',
-    text: 'Email confirmation',
+    text: `Please take a moment to confirm your email by copy and pasting this link into your browser http://${process.env.SERVER_HOST}confirmEmail?token=${token}`,
     html: `<p><img style="display: block; margin-left: auto; margin-right: auto;" src="${process.env.MAIL_LOGO_SOURCE}" width="621" height="207" /></p>` +
       '<p>&nbsp;</p>' +
       '<p style="text-align: center;">You recently registered an email account with our app.&nbsp;</p>' +

@@ -53,3 +53,13 @@ Confirming email
 - grab username from db where token = supplied token
 - set confirmedEmail to true in user table where username = username from above
 - remove token from db (confirm token table)
+
+Forgot password
+- create random 6-8 digit token
+- save token with username in db
+- send email to user's email with token
+
+Reset password
+- grab 6-8 digit token from request
+- grab username from db using token
+- reset password of username from request
