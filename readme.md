@@ -1,6 +1,8 @@
 # Intro
 This project is intended as a boiler plate server. It currently implements registration and login functions. Any configuration can be placed in server.config
 
+See [Routes API](https://github.com/twilkes149/baseServer/tree/master/src/routes) For documentation on the routes.
+
 # Getting started
 After cloning the repo
 run npm install
