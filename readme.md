@@ -7,7 +7,7 @@ See [Routes API](https://github.com/twilkes149/baseServer/tree/master/src/routes
 After cloning the repo
 run npm install
 
-Create a file called in the root project directory called .env and define values for:
+Create a file called .env in the root project directory called .env and define values for:
 - Server port
 - database host
 - database username
