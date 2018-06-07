@@ -1,5 +1,6 @@
 const express = require('express');
-require('dotenv-safe').config();//load environment variables
+if (process.env.PRODUCTION == false)
+  require('dotenv-safe').config();//load environment variables
 
 var loginRoute = require('./routes/login');
 var registerRoute = require('./routes/register');
@@ -37,6 +38,6 @@ server.use((req, res, next) => {
   res.status(404).send({success: false, message: 'path does not exist'});
 });
 
-server.listen(process.env.SERVER_PORT, () => {
-  console.log("Listening on port: ", process.env.SERVER_PORT);
+server.listen(process.env.PORT, () => {
+  console.log("Listening on port: ", process.env.PORT);
 });

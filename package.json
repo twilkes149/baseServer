@@ -4,7 +4,8 @@
   "description": "This is a base server, will read from a json file to determine tables in databases. Anything that extends this will already have routes for login, registration, and get user",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cd src && node index.js"
   },
   "author": "Tucker Wilkes",
   "license": "ISC",
