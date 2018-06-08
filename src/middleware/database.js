@@ -7,6 +7,7 @@ async function routeConnection(req, res, next) {
   if (conn == null) {
     let error = new Error({success: false, message: "DB Connection error"})
     error.status = 500;
+    error.body = {success: false, message: 'DB connection error'};
     return next(error);
   }
   res.locals.conn = conn;
@@ -23,6 +24,7 @@ async function createConnection(host, username, password, db) {
     });
   }
   catch (error) {
+    console.log('error: ', error);
     return null;
   }
 }
