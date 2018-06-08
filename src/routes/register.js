@@ -48,6 +48,7 @@ router.post('/register', async (req, res, next) => {
     res.status(200).send({success: true, message: 'Successfuly registered', token: token});//generate auth token and return to client
   }
   catch (error) {
+    console.log('error:', error);
     error.status = 500;
     error.body = {success: false, message: "SQL error"};
     return next(error);
