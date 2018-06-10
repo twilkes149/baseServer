@@ -20,7 +20,7 @@ router.post('/forgotPassword', async (req, res, next) => {
   let token = Database.sanitize(generateToken(6), conn);//generate token and sanitize, so it's the same format as every thing else
 
   try {
-    //save the username and token for future reference
+    //save the email and token for future reference
     let query = `INSERT INTO forgotpassword (value, email, createdat) VALUES ("${token}", "${email}", NOW())`;
     await conn.query(query);
     sendEmail(email, token);//send client their email
@@ -56,7 +56,7 @@ async function sendEmail(email, token) {
     text: `You recently request to reset your password through our app. Please do so, by entering this code into the app and following the onscreen instructions: ${token}`,
     html: '<p style="text-align: center;">You recently Requested to reset your password through our app.&nbsp;</p>' +
       `<p style="text-align: center;">Please copy and paste this token into the appropiate field in the app, and then following the on screen instructions</p>` +
-      `<p style="text-align: center;">${token}</p>` +
+      `<p style="text-align: center;"><b>${token}</b></p>` +
       '<p style="text-align: center;">If you feel you are receiving this email by mistake, please ignore it.&nbsp;</p>',
   };
   mailSender.send(msg);

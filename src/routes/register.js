@@ -7,7 +7,7 @@ var mailSender = require('@sendgrid/mail');
 /*
 * Response codes:
 * 400 - client didn't supply all fields
-* 409 - username already exists
+* 409 - email already exists
 * 500 - something unknown happened
 */
 
@@ -15,15 +15,14 @@ router.post('/register', async (req, res, next) => {
   console.log("register");
   let conn = res.locals.conn;
 
-  //retrieve info
-  let username = req.body.username ? Database.sanitize(req.body.username, conn) : null;
+  //retrieve info  
   let password = req.body.password ? Database.sanitize(req.body.password, conn) : null;
   let firstname = req.body.firstname ? Database.sanitize(req.body.firstname, conn) : null;
   let lastname = req.body.lastname ? Database.sanitize(req.body.lastname, conn) : null;
   let email = req.body.email ? Database.sanitize(req.body.email, conn) : null;
 
   //check if user supplied fields
-  if (!username || !password || !firstname || !lastname || !email) {
+  if (!password || !firstname || !lastname || !email) {
     let error = new Error("Not all fields were supplied");
     error.status = 400;
     error.body = {success: false, message: "Not all required fields were supplied"};
@@ -32,19 +31,19 @@ router.post('/register', async (req, res, next) => {
 
   //check if user previously registered
   if (await Database.isRegistered(email, conn)) {
-    let error = new Error("Username already exists");
+    let error = new Error("Email already exists");
     error.status = 409;
-    error.body = {success: false, message: 'Username already exists'};
+    error.body = {success: false, message: 'Email already exists'};
     return next(error);
   }  
 
   password = await Password.hash(password);//hash the password
   try {
-    let query = `INSERT INTO users (username, password, firstname, lastname, email) VALUES ("${username}", "${password}", "${firstname}", "${lastname}", "${email}")`;
+    let query = `INSERT INTO users (password, firstname, lastname, email) VALUES ("${password}", "${firstname}", "${lastname}", "${email}")`;
     await conn.query(query);
     
     let token = jwt.generateToken();
-    await sendEmail(email, username, conn);//send confirmation email
+    await sendEmail(email, conn);//send confirmation email
     res.status(200).send({success: true, message: 'Successfuly registered', token: token});//generate auth token and return to client
   }
   catch (error) {
@@ -57,10 +56,10 @@ router.post('/register', async (req, res, next) => {
 });
 
 
-async function sendEmail(email, username, conn) {
+async function sendEmail(email, conn) {
 
   let token = jwt.generateConfirmEmailToken();//generate random token
-  let query = `INSERT INTO confirmtoken (value, username) VALUES ("${token}", "${username}")`;//insert token into db
+  let query = `INSERT INTO confirmtoken (value, email) VALUES ("${token}", "${email}")`;//insert token into db
   await conn.query(query);
 
   email = email.replace(/^'|'$/g, '');  

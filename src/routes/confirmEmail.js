@@ -10,7 +10,7 @@ router.get('/confirmEmail', async (req, res, next) => {
 
   try {
     let payload = jwt.verifyToken(token);
-    let query = `SELECT username FROM confirmtoken WHERE value = "${token}"`;
+    let query = `SELECT email FROM confirmtoken WHERE value = "${token}"`;
     let result = await conn.query(query);
 
     //if there are no tokens in db
@@ -21,10 +21,10 @@ router.get('/confirmEmail', async (req, res, next) => {
       return next(error);
     }
 
-    let username = result[0].username;
+    let email = result[0].email;
 
     //update user email
-    query = `UPDATE users SET emailConfirmed = 1 WHERE username = "${username}"`;
+    query = `UPDATE users SET emailConfirmed = 1 WHERE email = "${email}"`;
     await conn.query(query);
 
     //delete token

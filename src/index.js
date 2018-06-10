@@ -1,6 +1,8 @@
 const express = require('express');
-if (process.env.PRODUCTION == false)
+if (!process.env.PRODUCTION) {
   require('dotenv-safe').config();//load environment variables
+  console.log("localhost");
+}
 
 var loginRoute = require('./routes/login');
 var registerRoute = require('./routes/register');
@@ -26,7 +28,8 @@ server.use(authenticate);//authenticate client for any other route
 //handle errors
 server.use((error, req, res, next) => {  
   //close db connection
-  res.locals.conn.close();
+  if (res.locals.conn)
+    res.locals.conn.end();
 
   if (error.status && error.body)
     res.status(error.status).send(error.body);
@@ -39,7 +42,7 @@ server.use((error, req, res, next) => {
 //handle invalid paths
 server.use((req, res, next) => {
   if (res.locals.conn)
-    res.locals.conn.clonse();
+    res.locals.conn.end();
   res.status(404).send({success: false, message: 'path does not exist'});
 });
 

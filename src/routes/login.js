@@ -9,11 +9,11 @@ router.post('/login', async (req, res, next) => {
   let conn = res.locals.conn;
 
   //retrieve info
-  let username = req.body.username ? Database.sanitize(req.body.username, conn) : null;
+  let email = req.body.email ? Database.sanitize(req.body.email, conn) : null;
   let password = req.body.password ? Database.sanitize(req.body.password, conn) : null;
 
   //check if user supplied fields
-  if (!username || !password) {
+  if (!email || !password) {
     let error = new Error("Not all fields were supplied");
     error.status = 400;
     error.body = {success: false, message: "Not all required fields were supplied"};
@@ -21,23 +21,23 @@ router.post('/login', async (req, res, next) => {
   }
 
   try {    
-    let query = `SELECT password FROM users WHERE username = "${username}"`;
+    let query = `SELECT password FROM users WHERE email = "${email}"`;
     let result = await conn.query(query);
 
     //check if we got a result
     if (!(result[0] && result[0].password)) {
-      let error = new Error("Invalid username/password");
+      let error = new Error("Invalid email/password");
       error.status = 401;
-      error.body = {success: false, message: 'Invalid username/password'};
+      error.body = {success: false, message: 'Invalid email/password'};
       return next(error);
     }
 
     //check if password matches
     let match = await Password.compare(password, result[0].password);    
     if (!match) {
-      let error = new Error("Invalid username/password");
+      let error = new Error("Invalid email/password");
       error.status = 401;
-      error.body = {success: false, message: 'Invalid username/password'};
+      error.body = {success: false, message: 'Invalid email/password'};
       return next(error);
     }
 
