@@ -32,6 +32,7 @@ router.post('/forgotPassword', async (req, res, next) => {
     error.body = {success: false, message: 'Internal server error'};
     return next(error);
   }
+  conn.end();
 });
 
 function generateToken(length) {

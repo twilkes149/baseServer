@@ -53,6 +53,7 @@ router.post('/register', async (req, res, next) => {
     error.body = {success: false, message: "SQL error"};
     return next(error);
   }
+  conn.end();
 });
 
 

@@ -55,6 +55,7 @@ router.get('/confirmEmail', async (req, res, next) => {
       return next(error);
     }
   }
+  conn.end();
 });
 
 module.exports = router;

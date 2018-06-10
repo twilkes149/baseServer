@@ -59,7 +59,7 @@ router.post('/resetPassword', async (req, res, next) => {
     error.body = {success: false, message: 'Internal server error'};
     return next(error);
   }
-
+  conn.end();
 });
 
 module.exports = router;

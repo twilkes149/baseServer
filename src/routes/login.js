@@ -49,6 +49,7 @@ router.post('/login', async (req, res, next) => {
     error.body = {success: false, message: "SQL error"};
     return next(error);
   }
+  conn.end();
 });
 
 module.exports = router;

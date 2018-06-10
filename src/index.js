@@ -25,6 +25,9 @@ server.use(authenticate);//authenticate client for any other route
 
 //handle errors
 server.use((error, req, res, next) => {  
+  //close db connection
+  res.locals.conn.close();
+
   if (error.status && error.body)
     res.status(error.status).send(error.body);
   else {
