@@ -38,6 +38,8 @@ server.use((error, req, res, next) => {
 
 //handle invalid paths
 server.use((req, res, next) => {
+  if (res.locals.conn)
+    res.locals.conn.clonse();
   res.status(404).send({success: false, message: 'path does not exist'});
 });
 
