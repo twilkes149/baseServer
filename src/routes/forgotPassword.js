@@ -20,8 +20,17 @@ router.post('/forgotPassword', async (req, res, next) => {
   let token = Database.sanitize(generateToken(6), conn);//generate token and sanitize, so it's the same format as every thing else
 
   try {
+    //make sure the email belongs to a current user
+    let result = await Database.isRegistered(email, conn, true)
+    if (!result) { //if user doesn't exist
+      let error = new Error('email doesn\'t exist');
+      error.status = 400;
+      error.body = {success: false, message: 'Email doesn\'t exist'};
+      return next(error);
+    }
+
     //save the email and token for future reference
-    let query = `INSERT INTO forgotpassword (value, email, createdat) VALUES ("${token}", "${email}", NOW())`;
+    query = `INSERT INTO forgotpassword (value, email, createdat) VALUES ("${token}", "${email}", NOW())`;
     await conn.query(query);
     sendEmail(email, token);//send client their email
     res.status(200).send({success: true, message: 'Email successfuly sent'});

@@ -28,8 +28,9 @@ async function createConnection(host, username, password, db) {
   }
 }
 
-async function isRegistered(email, conn) {
-  let query = `SELECT email FROM users WHERE email = "${email}"`;
+async function isRegistered(email, conn, emailConfirmed = false) {
+  
+  let query = (!emailConfirmed) ? `SELECT email FROM users WHERE email = "${email}"` : `SELECT email FROM users WHERE email = "${email}" and emailConfirmed = 1`;
 
   let result = await conn.query(query);
   if (result[0]) {
