@@ -31,7 +31,6 @@ MAIL_FROM_ADDRESS = 'no-reply@your-domain.com'
 # Tables
 ## Users
 Fields:
-- username
 - password
 - firstName
 - lastName
@@ -40,7 +39,7 @@ Fields:
 
 ## Confirm Token
 - value (used to verify if user is the same one that we sent an email to)
-- username
+- email
 
 ## Forgot password
 - value (used to verify user, sent in an email)
